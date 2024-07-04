@@ -1,4 +1,5 @@
-class Department {
+abstract class Department {
+  static fiscalYear = 2020;
   protected id: string;
 	public name: string = 'DEFAULT';
   private employees: string[] = [];
@@ -6,10 +7,14 @@ class Department {
 	constructor(id: string, name: string) {
     this.id = id;
 		this.name = name;
+    // console.log(Department.fiscalYear);
 	}
-  describe() {
-		console.log(`Department (${this.id}): ${this.name}`);
-	}
+  static createEmployee(name: string) {
+    return { name };
+  }
+
+  abstract describe(): void;
+
   addEmployee(employee: string) {
     // this.id = 'd2';
     this.employees.push(employee);
@@ -38,11 +43,11 @@ class ITDepartment extends Department {
   }
 
   describe() {
-		console.log(`Department ${this.name} (${this.id}): ${this.admins.length} admins`);
+		console.log(`${this.name} Department (${this.id}): ${this.admins.length} admins`);
 	}
 }
 
-const it = new ITDepartment('d1', ['Max']);
+const it = new ITDepartment('d1', ['Max', 'Julie']);
 it.describe();
 // it.addEmployee('Max');
 // it.addEmployee('Jil');
@@ -51,13 +56,23 @@ it.describe();
 // console.log(it);
 
 class AccountingDepartment extends Department {
+  private static instance: AccountingDepartment;
+
   private lastReport: string;
 
-  constructor(id: string, private reports: string[]) {
+  private constructor(id: string, private reports: string[]) {
     super(id, 'Accounting');
     this.lastReport = reports[0];
   }
 
+  static getInstance() {
+    // On vérifie si on a déjà une instance de AccountingDepartment
+    // Si oui on la retourne directement
+    if (this.instance) return this.instance;
+    // Si non on en crée une
+    this.instance = new AccountingDepartment('d2', []);
+    return this.instance;
+  }
   get mostRecentReport() {
     if (this.lastReport) {
       return this.lastReport;
@@ -71,6 +86,10 @@ class AccountingDepartment extends Department {
     this.addReport(value);
   }
 
+  describe() {
+    console.log(`Accounting Department : ${this.reports.length} reports`);
+  }
+
   addReport(text: string) {
     this.reports.push(text);
     this.lastReport = text;
@@ -80,13 +99,20 @@ class AccountingDepartment extends Department {
   }
 }
 
-const accounting = new AccountingDepartment('d2', []);
+// const accounting = new AccountingDepartment('d2', []);
+const accounting = AccountingDepartment.getInstance();
+const accounting2 = AccountingDepartment.getInstance();
+
+console.log(accounting, accounting2);
+
 accounting.describe();
 accounting.addReport('First Report');
 accounting.addReport('Second Report');
-accounting.mostRecentReport = '';
+// accounting.mostRecentReport = '';
 accounting.mostRecentReport = 'Foo';
 console.log(accounting.mostRecentReport); // -> 'Foo'
 
 accounting.printReports();
 
+const employee1 = Department.createEmployee('max');
+console.log(employee1, Department.fiscalYear); // -> { name: 'max' } 2020
