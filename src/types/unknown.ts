@@ -6,4 +6,5 @@ userInput = 'Max';
 
 if (typeof userInput === 'string') {
   userName = userInput;
+  console.log(userName);
 }

@@ -1,7 +1,7 @@
 
 let rate:5.5 = 5.5;
 // rate = 3;
-
+console.log(rate);
 
 type Combinable = number | string;
 type ConversionDescriptor = 'as-number' | 'as-text';

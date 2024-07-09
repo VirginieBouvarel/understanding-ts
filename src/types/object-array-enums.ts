@@ -21,6 +21,7 @@
 enum Role1 { ADMIN, READ_ONLY, AUTHOR};
 enum Role2 { ADMIN = 5, READ_ONLY, AUTHOR};
 enum Role3 { ADMIN = 'ADMIN', READ_ONLY = 100, AUTHOR = 'AUTHOR' };
+console.log(Role1, Role2, Role3);
 
 const person = {
   name: 'Maximilian',
@@ -36,6 +37,7 @@ const person = {
 
 let favoriteActivities: any;
 favoriteActivities = ['Sports'];
+console.log(favoriteActivities);
 
 console.log(person.name);
 

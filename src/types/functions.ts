@@ -33,10 +33,11 @@ addAndHandle(2, 6, (result) => {
 });
 
 function generateError(message: string, code: number): never {
-  throw { message: message, errorCode: code };
+  throw { message, errorCode: code };
 }
 
 generateError('An error occurred!', 500);
 
 
 let foo:Function;
+console.log(foo);
