@@ -10,10 +10,10 @@ type Employee = {
 
 type ElevatedEmployee = Admin & Employee;
 
-const employee1: ElevatedEmployee = {
+const employee2: ElevatedEmployee = {
   name: 'Max',
   privileges: ['create-server'],
   startDate: new Date(),
 }
 
-console.log(employee1);
+console.log(employee2);
