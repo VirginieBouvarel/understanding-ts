@@ -90,27 +90,90 @@
 //   }
 // }
 
-function Autobind(_target: any, _name: string, descriptor: PropertyDescriptor) {
-  const originalDescriptor = descriptor.value;
-  const newDescriptor: PropertyDescriptor = {
-    configurable: true,
-    enumerable: false,
-    get() {
-      return originalDescriptor.bind(this);
-    }
-  };
-  return newDescriptor;
+// function Autobind(_target: any, _name: string, descriptor: PropertyDescriptor) {
+//   const originalDescriptor = descriptor.value;
+//   const newDescriptor: PropertyDescriptor = {
+//     configurable: true,
+//     enumerable: false,
+//     get() {
+//       return originalDescriptor.bind(this);
+//     }
+//   };
+//   return newDescriptor;
+// }
+
+// class Printer {
+//   message = 'This works!';
+
+//   @Autobind
+//   showMessage() {
+//     console.log(this.message);
+//   }
+// }
+
+// const p = new Printer();
+// const button = document.querySelector('button');
+// button!.addEventListener('click', p.showMessage);
+
+
+/**
+ * Validation de champs de formulaire avec des décorateurs de propriétés
+ */
+
+const inputsRules: { [inputName: string]: string[] } = {};
+
+function addInputRule(inputName: string, rule: string) {
+  inputsRules[inputName] = inputsRules[inputName] ? [ ...inputsRules[inputName], rule] : [rule];
 }
 
-class Printer {
-  message = 'This works!';
+function Required(_target: any, propertyName: string) {
+  return addInputRule(propertyName, 'required');
+}
+function Maxlength (_target: any, propertyName: string) {
+  return addInputRule(propertyName, 'maxlength');
+}
+function Positive (_target: any, propertyName: string) {
+  return addInputRule(propertyName, 'positive');
+}
 
-  @Autobind
-  showMessage() {
-    console.log(this.message);
+const validate = (course: any) =>  
+  Object.entries(inputsRules).every(([input, types]) => 
+    types.every(type => 
+      type === 'required' && course[input] || 
+      type === 'positive' && course[input] > 0 ||
+      type === 'maxlength' && course[input].length < 5
+    )
+  )
+
+
+class Course {
+  @Required 
+  @Maxlength 
+  title: string;
+
+  @Required 
+  @Positive 
+  price: number;
+
+  constructor(t:string, p: number) {
+    this.title = t;
+    this.price = p;
   }
 }
 
-const p = new Printer();
-const button = document.querySelector('button');
-button!.addEventListener('click', p.showMessage);
+const courseForm = document.querySelector('form')!;
+courseForm.addEventListener('submit', event => {
+  event.preventDefault();
+  const titleElement = document.getElementById('title') as HTMLInputElement;
+  const priceElement = document.getElementById('price') as HTMLInputElement;
+  const title = titleElement.value;
+  const price = +priceElement.value;
+
+  const createdCourse = new Course(title, price);
+
+  if (!validate(createdCourse)) {
+    alert('Invalid input, please try again!');
+    return;
+  }
+  console.log(createdCourse);
+})
